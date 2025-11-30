@@ -32,14 +32,13 @@ export default function Header() {
 
     return (
         <nav
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/95 shadow-md py-3" : "bg-white/95 shadow-sm py-4"
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-blue-900 shadow-md py-3" : "bg-blue-900 shadow-sm py-4"
                 }`}
         >
             <div className="container mx-auto px-5 flex justify-between items-center">
                 {/* Logo */}
-                {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="relative w-72 h-24">
+                    <div className="relative w-40 h-16 md:w-72 md:h-24">
                         <Image
                             src={logo}
                             alt="Vivion Infra"
@@ -56,7 +55,7 @@ export default function Header() {
                         <li key={link.name}>
                             <Link
                                 href={link.href}
-                                className="font-medium text-blue-900 relative hover:text-blue-800 transition-colors after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-[2px] after:bg-gold after:transition-all after:duration-300 hover:after:w-full"
+                                className="font-medium text-white relative hover:text-gold transition-colors after:content-[''] after:absolute after:bottom-[-5px] after:left-0 after:w-0 after:h-[2px] after:bg-gold after:transition-all after:duration-300 hover:after:w-full"
                             >
                                 {link.name}
                             </Link>
@@ -65,7 +64,7 @@ export default function Header() {
                     <li>
                         <Link
                             href="/contact"
-                            className="px-5 py-2 border border-blue-900 rounded text-blue-900 font-medium hover:bg-blue-900 hover:text-white transition-all duration-300"
+                            className="px-5 py-2 border border-gold rounded text-gold font-medium hover:bg-gold hover:text-blue-900 transition-all duration-300"
                         >
                             Contact Us
                         </Link>
@@ -74,7 +73,7 @@ export default function Header() {
 
                 {/* Mobile Menu Button */}
                 <button
-                    className="md:hidden text-2xl text-blue-900"
+                    className="md:hidden text-2xl text-white"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -83,7 +82,7 @@ export default function Header() {
 
             {/* Mobile Navigation */}
             <div
-                className={`md:hidden absolute top-full left-0 w-full bg-white shadow-lg transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                className={`md:hidden absolute top-full left-0 w-full bg-blue-900 shadow-lg transition-all duration-300 overflow-hidden border-t border-white/10 ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                     }`}
             >
                 <ul className="flex flex-col items-center py-5 gap-5">
@@ -91,7 +90,7 @@ export default function Header() {
                         <li key={link.name}>
                             <Link
                                 href={link.href}
-                                className="font-medium text-blue-900 text-lg"
+                                className="font-medium text-white text-lg hover:text-gold transition-colors"
                                 onClick={() => setIsMobileMenuOpen(false)}
                             >
                                 {link.name}
@@ -101,7 +100,7 @@ export default function Header() {
                     <li>
                         <Link
                             href="/contact"
-                            className="px-6 py-2 bg-blue-900 text-white rounded font-medium hover:bg-blue-800 transition-colors"
+                            className="px-6 py-2 bg-gold text-blue-900 rounded font-medium hover:bg-gold-light transition-colors"
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             Contact Us

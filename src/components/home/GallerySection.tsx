@@ -19,12 +19,6 @@ const galleryImages = [
         title: "Modern Apartment",
     },
     {
-        id: 3,
-        src: "/images/hero/Gallery/IMG_0230.JPG",
-        category: "Commercial",
-        title: "Corporate Office",
-    },
-    {
         id: 4,
         src: "/images/hero/Gallery/IMG_0233.JPG",
         category: "Restaurants",
@@ -136,12 +130,12 @@ export default function GallerySection() {
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
                     {galleryImages.map((image, index) => (
                         <motion.div
                             key={image.id}
                             layoutId={`gallery-image-${image.id}`}
-                            className="relative group cursor-pointer overflow-hidden rounded-xl shadow-lg aspect-[4/3]"
+                            className="relative group cursor-pointer overflow-hidden rounded-xl shadow-lg aspect-square"
                             onClick={() => openLightbox(index)}
                             whileHover={{ y: -5 }}
                             transition={{ duration: 0.3 }}
