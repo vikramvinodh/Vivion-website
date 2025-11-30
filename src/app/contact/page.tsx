@@ -1,30 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
-import { sendEmail } from "../actions/sendEmail";
+import { useEmailForm } from "@/hooks/useEmailForm";
 
 export default function Contact() {
-    const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
-
-    async function handleSubmit(formData: FormData) {
-        setStatus("loading");
-        try {
-            const result = await sendEmail(formData);
-            if (result.success) {
-                setStatus("success");
-                // Reset form
-                const form = document.getElementById("contact-form") as HTMLFormElement;
-                form.reset();
-            } else {
-                setStatus("error");
-            }
-        } catch (error) {
-            console.error(error);
-            setStatus("error");
-        }
-    }
+    const { status, formRef, sendEmail, setStatus } = useEmailForm();
 
     return (
         <div className="pt-[70px]">
@@ -93,7 +74,7 @@ export default function Contact() {
                         {/* Contact Form */}
                         <div className="bg-gray-50 p-8 md:p-10 rounded-2xl shadow-lg border border-gray-100">
                             <h3 className="font-heading font-bold text-2xl text-blue-900 mb-6">Send us a Message</h3>
-                            <form id="contact-form" action={handleSubmit} className="space-y-6">
+                            <form ref={formRef} onSubmit={sendEmail} className="space-y-6">
                                 <div>
                                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                                     <input
@@ -144,13 +125,33 @@ export default function Contact() {
                                 >
                                     {status === "loading" ? "Sending..." : "Send Message"}
                                 </button>
-                                {status === "success" && (
-                                    <p className="text-green-600 text-center font-medium animate-fadeIn">Message sent successfully! We'll get back to you soon.</p>
-                                )}
                                 {status === "error" && (
                                     <p className="text-red-600 text-center font-medium animate-fadeIn">Something went wrong. Please try again or contact us directly.</p>
                                 )}
                             </form>
+
+                            {/* Thank You Modal */}
+                            {status === "success" && (
+                                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fadeIn p-4">
+                                    <div className="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl transform transition-all scale-100">
+                                        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 text-green-600">
+                                            <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-blue-900 mb-2">Thank You!</h3>
+                                        <p className="text-gray-600 mb-8">
+                                            We have received your message. Our team will get back to you shortly.
+                                        </p>
+                                        <button
+                                            onClick={() => setStatus("idle")}
+                                            className="w-full bg-blue-900 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition-colors"
+                                        >
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>

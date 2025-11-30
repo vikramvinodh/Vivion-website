@@ -13,7 +13,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
                     {/* Logo & Tagline */}
                     <div className="footer-logo">
-                        <div className="mb-6 relative w-48 h-16">
+                        <div className="mb-6 relative w-80 h-28">
                             <Image
                                 src="/logo.png"
                                 alt="Vivion Infra"

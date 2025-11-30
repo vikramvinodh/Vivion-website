@@ -39,7 +39,7 @@ export default function Header() {
                 {/* Logo */}
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="relative w-40 h-12">
+                    <div className="relative w-72 h-24">
                         <Image
                             src={logo}
                             alt="Vivion Infra"

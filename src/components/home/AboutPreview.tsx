@@ -1,29 +1,39 @@
 import Link from "next/link";
 import Image from "next/image";
-import { FaCheckCircle, FaProjectDiagram, FaUserTie, FaSmile } from "react-icons/fa";
+import { FaCheckCircle } from "react-icons/fa";
 
 export default function AboutPreview() {
-    const stats = [
-        { icon: FaUserTie, value: "20+", label: "Years Experience" },
-        { icon: FaProjectDiagram, value: "150+", label: "Projects Delivered" },
-        { icon: FaSmile, value: "100%", label: "Client Satisfaction" },
-    ];
-
     return (
-        <section id="about" className="relative py-24 bg-blue-900 text-white overflow-hidden">
-            {/* Background Image */}
+        <section id="about" className="relative py-24 bg-white text-white overflow-hidden">
+            {/* Background Image - Full width, no overlay on the right */}
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/images/projects/interior.png"
                     alt="Luxury Interior"
                     fill
-                    className="object-cover opacity-20"
+                    className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-blue-900/70"></div>
             </div>
 
-            <div className="container mx-auto px-5 relative z-10">
-                <div className="flex flex-col lg:flex-row items-center gap-16">
+            {/* Blue Overlay with Angled Clip Path */}
+            <div
+                className="absolute inset-0 bg-blue-900/95 z-10 w-full lg:w-[65%]"
+                style={{ clipPath: "polygon(0 0, 100% 0, 85% 100%, 0% 100%)" }}
+            ></div>
+
+            {/* Mobile Overlay - Full coverage on small screens if needed, but the above covers enough. 
+                Let's add a full overlay for mobile only if the clip-path looks bad, 
+                but actually the above div will just be a rectangle on mobile if we don't apply clip-path, 
+                or we can adjust clip-path for mobile. 
+                Let's make it simple: on mobile, full blue overlay. On lg, clipped.
+            */}
+            <div
+                className="absolute inset-0 bg-blue-900/95 z-10 lg:hidden"
+            ></div>
+
+
+            <div className="container mx-auto px-5 relative z-20">
+                <div className="flex flex-col lg:flex-row items-center">
                     <div className="lg:w-1/2">
                         <h2 className="font-heading font-bold text-4xl md:text-5xl mb-6 leading-tight">
                             Why Choose <span className="text-gold">Vivion</span>?
@@ -58,27 +68,8 @@ export default function AboutPreview() {
                         </Link>
                     </div>
 
-                    <div className="lg:w-1/2 w-full">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {stats.map((stat, index) => (
-                                <div
-                                    key={index}
-                                    className={`${index === 2 ? "md:col-span-2" : ""
-                                        } bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-2xl text-center hover:bg-white/20 transition-all duration-300 group`}
-                                >
-                                    <div className="text-gold text-4xl mb-4 flex justify-center group-hover:scale-110 transition-transform duration-300">
-                                        <stat.icon />
-                                    </div>
-                                    <div className="font-heading font-bold text-4xl md:text-5xl mb-2">
-                                        {stat.value}
-                                    </div>
-                                    <div className="text-gray-300 font-medium uppercase tracking-wide text-sm">
-                                        {stat.label}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    {/* Right side is empty to reveal the image */}
+                    <div className="lg:w-1/2"></div>
                 </div>
             </div>
         </section>
