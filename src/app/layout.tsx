@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+// import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
@@ -21,11 +21,6 @@ const customFont = localFont({
   variable: "--font-custom",
 });
 
-export const metadata: Metadata = {
-  title: "Vivion Infra Facility Pvt. Ltd. | Premium Construction Services",
-  description: "Vivion Infra Facility Pvt. Ltd. offers top-tier construction, renovation, and general contracting services.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>Vivion Infra Facility Pvt. Ltd. | Premium Construction Services</title>
+        <meta name="description" content="Vivion Infra Facility Pvt. Ltd. offers top-tier construction, renovation, and general contracting services." />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+      </head>
       <body
         className={`${inter.variable} ${playfair.variable} ${customFont.variable} antialiased`}
       >

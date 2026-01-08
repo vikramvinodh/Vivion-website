@@ -81,7 +81,7 @@ export default function Services() {
                             {services.map((service, index) => (
                                 <div
                                     key={index}
-                                    className={`flex-shrink-0 px-4 w-full md:w-1/2 lg:w-1/3`}
+                                    className={`shrink-0 px-4 w-full md:w-1/2 lg:w-1/3`}
                                 >
                                     <div className="bg-white rounded-lg shadow-md hover:shadow-xl transition-all duration-300 group overflow-hidden border border-gray-100 hover:border-gold/50 h-full">
                                         <div className="relative h-64 w-full overflow-hidden">
