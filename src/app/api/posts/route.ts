@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     try {
         const session = await getServerSession(authOptions);
 
-        if (!session) {
+        if (!session || !session.user) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
@@ -34,12 +34,12 @@ export async function POST(request: Request) {
 
         const post = await Post.create({
             ...body,
-            author: session.user.id
+            author: (session.user as any).id
         });
 
         return NextResponse.json(post, { status: 201 });
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: 'Failed to create post' }, { status: 500 });
+    } catch (error: any) {
+        console.error("Post Creation Error:", error);
+        return NextResponse.json({ error: error.message || 'Failed to create post' }, { status: 500 });
     }
 }

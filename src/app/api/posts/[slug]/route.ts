@@ -34,14 +34,19 @@ export async function PUT(request: Request, { params }: { params: Promise<{ slug
         // In a real app, you might want to check if the user is the author or admin
         // For now, any authenticated user can edit (assuming only admins have accounts)
 
-        const post = await Post.findOneAndUpdate({ slug }, body, {
-            new: true,
-            runValidators: true,
-        });
+        const post = await Post.findOne({ slug });
 
         if (!post) {
             return NextResponse.json({ error: 'Post not found' }, { status: 404 });
         }
+
+        if (body.title !== undefined) post.title = body.title;
+        if (body.content !== undefined) post.content = body.content;
+        if (body.excerpt !== undefined) post.excerpt = body.excerpt;
+        if (body.coverImage !== undefined) post.coverImage = body.coverImage;
+        if (body.published !== undefined) post.published = body.published;
+
+        await post.save();
 
         return NextResponse.json(post);
     } catch (error) {

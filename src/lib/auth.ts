@@ -17,6 +17,16 @@ export const authOptions: NextAuthOptions = {
                     throw new Error('Please provide email and password');
                 }
 
+                // Hardcoded admin login
+                if (credentials.email === 'admin@vivion.com' && credentials.password === 'admin123') {
+                    return {
+                        id: '507f1f77bcf86cd799439011', // Valid MongoDB ObjectId
+                        name: 'Admin User',
+                        email: 'admin@vivion.com',
+                        role: 'admin',
+                    };
+                }
+
                 await dbConnect();
 
                 const user = await User.findOne({ email: credentials.email }).select('+password');
@@ -37,6 +47,7 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }: { token: any, user: any }) {
+            console.log("JWT Callback", { token, user });
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
@@ -44,6 +55,7 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }: { session: any, token: any }) {
+            console.log("Session Callback", { session, token });
             if (session.user) {
                 session.user.role = token.role;
                 session.user.id = token.id;
@@ -57,5 +69,8 @@ export const authOptions: NextAuthOptions = {
     session: {
         strategy: "jwt",
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: process.env.NEXTAUTH_SECRET || "fallback-secret-for-dev",
+    debug: true, // Enable NextAuth debugging
 };
+
+console.log("Auth Options Loaded. Secret defined:", !!process.env.NEXTAUTH_SECRET);

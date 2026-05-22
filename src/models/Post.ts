@@ -1,7 +1,18 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
 
-const PostSchema = new mongoose.Schema({
+export interface IPost extends mongoose.Document {
+    title: string;
+    slug: string;
+    content: string;
+    excerpt: string;
+    coverImage: string;
+    author: mongoose.Schema.Types.ObjectId;
+    published: boolean;
+    createdAt: Date;
+}
+
+const PostSchema = new mongoose.Schema<IPost>({
     title: {
         type: String,
         required: [true, 'Please provide a title'],
@@ -38,13 +49,10 @@ const PostSchema = new mongoose.Schema({
 });
 
 // Create slug from title before saving
-PostSchema.pre('save', function (next) {
-    if (!this.isModified('title')) {
-        next();
-        return;
+PostSchema.pre('save', function (this: IPost) {
+    if (this.isModified('title')) {
+        this.slug = slugify(this.title, { lower: true });
     }
-    this.slug = slugify(this.title, { lower: true });
-    next();
 });
 
-export default mongoose.models.Post || mongoose.model('Post', PostSchema);
+export default mongoose.models.Post || mongoose.model<IPost>('Post', PostSchema);

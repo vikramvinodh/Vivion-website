@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
 
 interface PostFormProps {
     initialData?: {
@@ -60,7 +61,7 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
                 throw new Error(data.error || 'Something went wrong');
             }
 
-            router.push('/admin');
+            router.push('/admin/blogs');
             router.refresh();
         } catch (err: any) {
             setError(err.message);
@@ -70,83 +71,91 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white p-8 rounded shadow">
-            {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
+        <form onSubmit={handleSubmit} className="max-w-4xl mx-auto bg-white p-8 rounded-xl border border-gray-200 shadow-sm space-y-6">
+            {error && (
+                <div className="bg-red-50 border border-red-100 text-red-700 p-4 rounded-lg text-sm">
+                    {error}
+                </div>
+            )}
 
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Title</label>
+            <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Post Title</label>
                 <input
                     type="text"
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
+                    placeholder="Enter a descriptive post title..."
                     required
                 />
             </div>
 
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Excerpt</label>
+            <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Excerpt</label>
                 <textarea
                     name="excerpt"
                     value={formData.excerpt}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
+                    placeholder="Summarize the article in 1-2 sentences..."
                     rows={3}
+                    maxLength={200}
                 />
             </div>
 
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Cover Image URL</label>
+            <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cover Image URL</label>
                 <input
                     type="text"
                     name="coverImage"
                     value={formData.coverImage}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    placeholder="https://example.com/image.jpg"
+                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
+                    placeholder="https://images.unsplash.com/photo-..."
                 />
             </div>
 
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Content (HTML supported)</label>
+            <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Content (HTML Supported)</label>
                 <textarea
                     name="content"
                     value={formData.content}
                     onChange={handleChange}
-                    className="w-full border p-2 rounded font-mono text-sm"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
+                    placeholder="<p>Write your HTML or text content here...</p>"
                     rows={15}
                     required
                 />
             </div>
 
-            <div className="mb-6">
-                <label className="flex items-center gap-2 cursor-pointer">
+            <div className="pt-2 border-t border-gray-100 flex items-center">
+                <label className="flex items-center gap-2.5 cursor-pointer select-none">
                     <input
                         type="checkbox"
                         name="published"
                         checked={formData.published}
                         onChange={handleCheckboxChange}
-                        className="w-5 h-5"
+                        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                     />
-                    <span className="text-gray-700 font-bold">Publish immediately</span>
+                    <span className="text-sm font-semibold text-gray-700">Publish immediately to website</span>
                 </label>
             </div>
 
-            <div className="flex justify-end gap-4">
+            <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
                 <button
                     type="button"
                     onClick={() => router.back()}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition cursor-pointer"
                 >
-                    Cancel
+                    <FiX className="w-4 h-4" /> Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={loading}
-                    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+                    className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-semibold shadow-sm transition disabled:opacity-50 cursor-pointer animate-all"
                 >
-                    {loading ? 'Saving...' : (isEditing ? 'Update Post' : 'Create Post')}
+                    <FiSave className="w-4 h-4" /> {loading ? 'Saving...' : (isEditing ? 'Update Post' : 'Create Post')}
                 </button>
             </div>
         </form>

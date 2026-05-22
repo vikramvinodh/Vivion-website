@@ -19,8 +19,11 @@ export default async function EditPostPage({ params }: { params: Promise<{ slug:
     }
 
     return (
-        <div className="container mx-auto px-4 py-12">
-            <h1 className="text-3xl font-bold text-blue-900 mb-8 max-w-4xl mx-auto">Edit Post: {post.title}</h1>
+        <div className="space-y-6">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Edit Post</h1>
+                <p className="text-sm text-gray-500 mt-1">Make changes to the post titled "{post.title}".</p>
+            </div>
             <PostForm initialData={post} isEditing={true} />
         </div>
     );
