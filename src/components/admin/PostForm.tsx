@@ -1,8 +1,16 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { FiSave, FiX, FiCheckCircle } from 'react-icons/fi';
+import dynamic from 'next/dynamic';
+import type { SkilldeckEditorRef } from 'skilldeck-editor';
+
+// Dynamically import the editor with SSR disabled because it relies on document and window objects
+const SkilldeckEditor = dynamic(
+    () => import('skilldeck-editor').then((mod) => mod.SkilldeckEditor),
+    { ssr: false }
+);
 
 interface PostFormProps {
     initialData?: {
@@ -18,6 +26,7 @@ interface PostFormProps {
 
 export default function PostForm({ initialData, isEditing = false }: PostFormProps) {
     const router = useRouter();
+    const editorRef = useRef<SkilldeckEditorRef | null>(null);
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         content: initialData?.content || '',
@@ -38,12 +47,25 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
         setFormData(prev => ({ ...prev, [name]: checked }));
     };
 
+    const handleEditorReady = (methods: SkilldeckEditorRef) => {
+        editorRef.current = methods;
+        if (initialData?.content) {
+            methods.injectHTML(initialData.content);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
 
         try {
+            // Get content from skilldeck-editor
+            const htmlContent = editorRef.current ? editorRef.current.getHTML() : formData.content;
+            if (!htmlContent || htmlContent.trim() === '' || htmlContent === '<p><br></p>') {
+                throw new Error('Please write some content in the editor');
+            }
+
             const url = isEditing
                 ? `/api/posts/${initialData?.slug}`
                 : '/api/posts';
@@ -53,7 +75,7 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
             const res = await fetch(url, {
                 method,
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: JSON.stringify({ ...formData, content: htmlContent }),
             });
 
             if (!res.ok) {
@@ -117,16 +139,12 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
             </div>
 
             <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Content (HTML Supported)</label>
-                <textarea
-                    name="content"
-                    value={formData.content}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
-                    placeholder="<p>Write your HTML or text content here...</p>"
-                    rows={15}
-                    required
-                />
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Content</label>
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-white min-h-[420px] shadow-sm">
+                    <SkilldeckEditor
+                        onReady={handleEditorReady}
+                    />
+                </div>
             </div>
 
             <div className="pt-2 border-t border-gray-100 flex items-center">

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+import './User';
 
 export interface IPost extends mongoose.Document {
     title: string;

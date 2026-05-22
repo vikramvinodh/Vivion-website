@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
-import { FiGrid, FiBookOpen, FiUsers, FiExternalLink, FiLogOut } from 'react-icons/fi';
+import { FiGrid, FiBookOpen, FiUsers, FiExternalLink, FiLogOut, FiDollarSign } from 'react-icons/fi';
 
 interface AdminSidebarProps {
     session: any;
@@ -23,6 +23,11 @@ export default function AdminSidebar({ session }: AdminSidebarProps) {
             name: 'Blogs',
             path: '/admin/blogs',
             icon: FiBookOpen,
+        },
+        {
+            name: 'Estimations',
+            path: '/admin/estimations',
+            icon: FiDollarSign,
         },
         {
             name: 'Users',
