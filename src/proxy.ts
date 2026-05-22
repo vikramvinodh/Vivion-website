@@ -3,9 +3,9 @@ import type { NextRequest } from 'next/server';
 
 export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
-    const hostname = request.headers.get('host') || '';
+    const hostname = request.nextUrl.hostname;
 
-    // Checks if the hostname starts with "admin." (e.g. admin.vivion.com or admin.localhost:3000)
+    // Checks if the hostname starts with "admin." (e.g. admin.vivion.com or admin.localhost)
     const isAdminSubdomain = hostname.startsWith('admin.');
 
     if (isAdminSubdomain) {
