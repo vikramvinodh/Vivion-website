@@ -7,11 +7,26 @@ import ShareButton from '@/components/blogs/ShareButton';
 import dbConnect from '@/lib/mongodb';
 import Post from '@/models/Post';
 import User from '@/models/User';
+import JsonLd from '@/components/seo/JsonLd';
+import { articleJsonLd, breadcrumbJsonLd, clampDescription } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
 
 interface Props {
     params: Promise<{ slug: string }>;
+}
+
+// Prerender every published post at build time so crawlers hit a cached page.
+// Posts published later still render on demand (dynamicParams defaults to true).
+export async function generateStaticParams() {
+    try {
+        await dbConnect();
+        const posts = await Post.find({ published: true }).select('slug').lean();
+        return posts.map((post: any) => ({ slug: post.slug }));
+    } catch {
+        // Don't fail the build if the DB is unreachable — fall back to on-demand.
+        return [];
+    }
 }
 
 async function getPost(slug: string) {
@@ -28,26 +43,36 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     if (!post) {
         return {
-            title: 'Article Not Found | Vivion Infra',
+            title: 'Article Not Found',
             description: 'The requested article could not be found.',
+            // Don't let a missing post accumulate indexed 404-ish pages.
+            robots: { index: false, follow: false },
         };
     }
 
+    const description = clampDescription(
+        post.excerpt ||
+        `${post.title} — insights on construction, architectural design and interiors from the Vivion Infra team.`,
+    );
+    const canonical = `/blogs/${post.slug}`;
+
     return {
-        title: `${post.title} | Vivion Infra`,
-        description: post.excerpt || `${post.title} - Read our latest insights on construction, premium architectural design, and modern engineering.`,
-        keywords: ['construction', 'architecture', 'interior design', 'civil engineering', 'luxury homes', post.title.toLowerCase()],
+        // The root layout's template appends the brand suffix.
+        title: post.title,
+        description,
+        alternates: { canonical },
         openGraph: {
             title: post.title,
-            description: post.excerpt || `${post.title} - Insights by Vivion Infra.`,
-            images: post.coverImage ? [{ url: post.coverImage }] : [],
+            description,
+            url: canonical,
+            images: post.coverImage ? [{ url: post.coverImage, alt: post.title }] : [],
             type: 'article',
-            publishedTime: post.createdAt,
+            publishedTime: new Date(post.createdAt).toISOString(),
         },
         twitter: {
             card: 'summary_large_image',
             title: post.title,
-            description: post.excerpt,
+            description,
             images: post.coverImage ? [post.coverImage] : [],
         }
     };
@@ -130,10 +155,14 @@ export default async function BlogPostDetailPage({ params }: Props) {
 
                 {post.coverImage && (post.coverImage.startsWith('/') || post.coverImage.startsWith('http')) && (
                     <div className="mb-12 w-full aspect-[21/9] relative rounded-2xl overflow-hidden shadow-md border border-slate-200/50">
-                        <img
+                        <Image
                             src={post.coverImage}
                             alt={post.title}
-                            className="w-full h-full object-cover"
+                            fill
+                            // The article's LCP element — preload it.
+                            priority
+                            sizes="(max-width: 1024px) 100vw, 896px"
+                            className="object-cover"
                         />
                     </div>
                 )}
@@ -165,6 +194,24 @@ export default async function BlogPostDetailPage({ params }: Props) {
                     </div>
                 </div>
             </div>
+
+            <JsonLd
+                data={[
+                    articleJsonLd({
+                        title: post.title,
+                        slug: post.slug,
+                        excerpt: post.excerpt,
+                        coverImage: post.coverImage,
+                        createdAt: post.createdAt,
+                        authorName: post.author?.name,
+                    }),
+                    breadcrumbJsonLd([
+                        { name: 'Home', path: '/' },
+                        { name: 'Blog', path: '/blogs' },
+                        { name: post.title, path: `/blogs/${post.slug}` },
+                    ]),
+                ]}
+            />
         </article>
     );
 }

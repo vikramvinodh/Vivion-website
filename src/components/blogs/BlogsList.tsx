@@ -57,10 +57,12 @@ export default function BlogsList({ posts }: BlogsListProps) {
                         {/* Cover Image */}
                         <div className="h-56 w-full bg-slate-100 relative overflow-hidden shrink-0">
                             {post.coverImage && (post.coverImage.startsWith('/') || post.coverImage.startsWith('http')) ? (
-                                <img
+                                <Image
                                     src={post.coverImage}
                                     alt={post.title}
-                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                    className="object-cover transition-transform duration-500 group-hover:scale-103"
                                 />
                             ) : (
                                 <div className="absolute inset-0 bg-gradient-to-tr from-slate-900 to-blue-900 flex items-center justify-center p-6 text-center">

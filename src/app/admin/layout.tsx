@@ -1,7 +1,14 @@
+import type { Metadata } from 'next';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import AdminSidebar from '@/components/admin/AdminSidebar';
+
+export const metadata: Metadata = {
+    title: 'Admin',
+    // Belt and braces alongside robots.txt and the X-Robots-Tag set in proxy.ts.
+    robots: { index: false, follow: false, nocache: true },
+};
 
 export default async function AdminLayout({
     children,

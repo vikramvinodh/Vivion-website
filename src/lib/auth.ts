@@ -47,7 +47,6 @@ export const authOptions: NextAuthOptions = {
     ],
     callbacks: {
         async jwt({ token, user }: { token: any, user: any }) {
-            console.log("JWT Callback", { token, user });
             if (user) {
                 token.role = user.role;
                 token.id = user.id;
@@ -55,7 +54,6 @@ export const authOptions: NextAuthOptions = {
             return token;
         },
         async session({ session, token }: { session: any, token: any }) {
-            console.log("Session Callback", { session, token });
             if (session.user) {
                 session.user.role = token.role;
                 session.user.id = token.id;
@@ -73,4 +71,3 @@ export const authOptions: NextAuthOptions = {
     debug: true, // Enable NextAuth debugging
 };
 
-console.log("Auth Options Loaded. Secret defined:", !!process.env.NEXTAUTH_SECRET);

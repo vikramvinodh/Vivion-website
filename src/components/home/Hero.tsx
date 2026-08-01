@@ -1,9 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import LeadModal from "@/components/LeadModal";
 
 export default function Hero() {
+    const [quoteOpen, setQuoteOpen] = useState(false);
     return (
         <section
             id="home"
@@ -35,14 +38,23 @@ export default function Hero() {
                     >
                         Our Services
                     </Link>
-                    <Link
-                        href="/contact"
-                        className="px-8 py-3 border-2 border-white text-white font-bold rounded-full uppercase tracking-wider hover:bg-white hover:text-blue-900 transition-all duration-300"
+                    <button
+                        onClick={() => setQuoteOpen(true)}
+                        className="px-8 py-3 border-2 border-white text-white font-bold rounded-full uppercase tracking-wider hover:bg-white hover:text-blue-900 transition-all duration-300 cursor-pointer"
                     >
                         Get a Quote
-                    </Link>
+                    </button>
                 </div>
             </div>
+
+            <LeadModal
+                open={quoteOpen}
+                onClose={() => setQuoteOpen(false)}
+                title="Get a Free Quote"
+                subtitle="Tell us about your project and we'll get back to you."
+                source="Get a Quote"
+                submitLabel="Request Quote"
+            />
         </section>
     );
 }

@@ -1,8 +1,23 @@
+import type { Metadata } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Estimation from '@/models/Estimation';
 import EstimationsCalculator from '@/components/home/EstimationsCalculator';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+    title: 'House Construction Cost Calculator in Bangalore',
+    description:
+        'Estimate your house construction cost per sq.ft in Bangalore. Compare standard, premium and luxury packages with a full breakdown of materials and inclusions.',
+    alternates: { canonical: '/estimations' },
+    openGraph: {
+        type: 'website',
+        url: '/estimations',
+        title: 'House Construction Cost Calculator in Bangalore | Vivion',
+        description:
+            'Estimate construction cost per sq.ft and compare package inclusions for your Bangalore build.',
+    },
+};
 
 const defaultEstimations = [
     {

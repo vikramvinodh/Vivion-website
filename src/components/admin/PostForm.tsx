@@ -36,6 +36,30 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [uploading, setUploading] = useState(false);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        setError('');
+        try {
+            const body = new FormData();
+            body.append('file', file);
+
+            const res = await fetch('/api/upload', { method: 'POST', body });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Upload failed');
+
+            setFormData(prev => ({ ...prev, coverImage: data.url }));
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setUploading(false);
+            e.target.value = ''; // allow re-selecting the same file
+        }
+    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -127,15 +151,35 @@ export default function PostForm({ initialData, isEditing = false }: PostFormPro
             </div>
 
             <div>
-                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cover Image URL</label>
-                <input
-                    type="text"
-                    name="coverImage"
-                    value={formData.coverImage}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
-                    placeholder="https://images.unsplash.com/photo-..."
-                />
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Cover Image</label>
+                <div className="flex items-start gap-4">
+                    {formData.coverImage && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                            src={formData.coverImage}
+                            alt="Cover preview"
+                            className="w-32 h-20 object-cover rounded-lg border border-gray-200 flex-shrink-0"
+                        />
+                    )}
+                    <div className="flex-1 space-y-2">
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            disabled={uploading}
+                            className="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 file:cursor-pointer disabled:opacity-50"
+                        />
+                        {uploading && <p className="text-xs text-blue-600">Uploading…</p>}
+                        <input
+                            type="text"
+                            name="coverImage"
+                            value={formData.coverImage}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50/30"
+                            placeholder="…or paste an image URL"
+                        />
+                    </div>
+                </div>
             </div>
 
             <div>

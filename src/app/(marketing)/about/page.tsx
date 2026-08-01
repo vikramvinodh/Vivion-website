@@ -1,4 +1,19 @@
+import type { Metadata } from "next";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+    title: "About Us — Construction Company in Bangalore",
+    description:
+        "Learn about Vivion Infra Facility Pvt. Ltd. — our team, values and track record delivering residential and commercial construction, renovation and interiors across Bangalore.",
+    alternates: { canonical: "/about" },
+    openGraph: {
+        type: "website",
+        url: "/about",
+        title: "About Vivion Infra Facility Pvt. Ltd.",
+        description:
+            "Our team, values and track record in construction, renovation and interiors across Bangalore.",
+    },
+};
 
 export default function About() {
     return (

@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react';
 import { FiCheck, FiInfo, FiSliders, FiDollarSign, FiPercent, FiList, FiPhoneCall, FiGrid } from 'react-icons/fi';
 import { motion } from 'framer-motion';
+import LeadModal from '@/components/LeadModal';
 
 interface EstimationData {
     _id: string;
@@ -20,6 +21,7 @@ interface EstimationsCalculatorProps {
 export default function EstimationsCalculator({ initialEstimations }: EstimationsCalculatorProps) {
     const [area, setArea] = useState<number>(2000);
     const [selectedCategory, setSelectedCategory] = useState<'basic' | 'medium' | 'premium' | 'max'>('medium');
+    const [leadOpen, setLeadOpen] = useState(false);
 
     const activeEstimation = useMemo(() => {
         return initialEstimations.find(est => est.category === selectedCategory) || initialEstimations[0];
@@ -259,12 +261,13 @@ export default function EstimationsCalculator({ initialEstimations }: Estimation
                         </div>
 
                         {/* Book Consultation Button */}
-                        <a
-                            href="/contact"
+                        <button
+                            type="button"
+                            onClick={() => setLeadOpen(true)}
                             className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-3.5 px-5 rounded-xl text-sm transition-all duration-350 active:scale-98 shadow-lg shadow-amber-500/10 hover:shadow-amber-500/20 mt-6 cursor-pointer"
                         >
                             <FiPhoneCall className="w-4 h-4" /> Book Consultation
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -276,6 +279,15 @@ export default function EstimationsCalculator({ initialEstimations }: Estimation
                     </p>
                 </div>
             </div>
+
+            <LeadModal
+                open={leadOpen}
+                onClose={() => setLeadOpen(false)}
+                title="Book a Free Consultation"
+                subtitle="Share your details and our team will call you back."
+                source="Book Consultation"
+                submitLabel="Book Consultation"
+            />
         </div>
     );
 }

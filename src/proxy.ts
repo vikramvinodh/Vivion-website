@@ -5,11 +5,26 @@ export function proxy(request: NextRequest) {
     const url = request.nextUrl.clone();
     const hostname = request.nextUrl.hostname;
 
+    // On local dev, skip subdomain routing entirely so plain
+    // localhost:3000/admin works without redirecting to admin.localhost
+    const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1';
+    if (isLocalhost) {
+        return NextResponse.next();
+    }
+
     // Checks if the hostname starts with "admin." (e.g. admin.vivion.com or admin.localhost)
     const isAdminSubdomain = hostname.startsWith('admin.');
 
     if (isAdminSubdomain) {
         const pathname = url.pathname;
+
+        // Nothing on the admin subdomain should ever be indexed. robots.txt on
+        // the apex only covers apex paths, so set the header here — it applies
+        // to every admin response regardless of how the path is rewritten.
+        const noIndex = (response: NextResponse) => {
+            response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+            return response;
+        };
 
         // Skip internal next, api and public assets
         if (
@@ -22,10 +37,11 @@ export function proxy(request: NextRequest) {
             // Rewrite requests so the user stays on "admin.domain.com/blogs" but Next.js renders "/admin/blogs"
             if (pathname === '/login') {
                 // Let /login pass through
+                return noIndex(NextResponse.next());
             } else if (pathname.startsWith('/admin')) {
                 // If they explicitly typed /admin/..., rewrite it to remove the /admin prefix to avoid double routing
                 url.pathname = pathname.replace('/admin', '') || '/';
-                return NextResponse.redirect(url);
+                return noIndex(NextResponse.redirect(url));
             } else {
                 // Rewrite: E.g., / -> /admin, /blogs -> /admin/blogs, /users -> /admin/users
                 if (pathname === '/') {
@@ -33,7 +49,7 @@ export function proxy(request: NextRequest) {
                 } else {
                     url.pathname = `/admin${pathname}`;
                 }
-                return NextResponse.rewrite(url);
+                return noIndex(NextResponse.rewrite(url));
             }
         }
     } else {

@@ -27,6 +27,7 @@ export default function Header() {
         { name: "Home", href: "/" },
         { name: "Services", href: "/#services" },
         { name: "Projects", href: "/projects" },
+        { name: "Properties", href: "/property-management" },
         { name: "About Us", href: "/about" },
         { name: "Estimations", href: "/estimations" },
         { name: "Blog", href: "/blogs" },
@@ -34,13 +35,13 @@ export default function Header() {
 
     return (
         <nav
-            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-blue-900 shadow-md py-3" : "bg-blue-900 shadow-sm py-4"
+            className={`fixed top-0 left-0 w-full z-50 transition-all duration-300 ${isScrolled ? "bg-blue-900 shadow-md py-1.5" : "bg-blue-900 shadow-sm py-2"
                 }`}
         >
             <div className="container mx-auto px-5 flex justify-between items-center">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2.5 group">
-                    <div className="relative w-40 h-16 md:w-72 md:h-24">
+                    <div className="relative w-28 h-11 md:w-48 md:h-14">
                         <Image
                             src={logo}
                             alt="Vivion Infra"
@@ -52,7 +53,7 @@ export default function Header() {
                 </Link>
 
                 {/* Desktop Navigation */}
-                <ul className="hidden md:flex items-center gap-8">
+                <ul className="hidden lg:flex items-center gap-5">
                     {navLinks.map((link) => (
                         <li key={link.name}>
                             <Link
@@ -75,7 +76,7 @@ export default function Header() {
 
                 {/* Mobile Menu Button */}
                 <button
-                    className="md:hidden text-2xl text-white"
+                    className="lg:hidden text-2xl text-white"
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 >
                     {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
@@ -84,7 +85,7 @@ export default function Header() {
 
             {/* Mobile Navigation */}
             <div
-                className={`md:hidden absolute top-full left-0 w-full bg-blue-900 shadow-lg transition-all duration-300 overflow-hidden border-t border-white/10 ${isMobileMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                className={`lg:hidden absolute top-full left-0 w-full bg-blue-900 shadow-lg transition-all duration-300 overflow-hidden border-t border-white/10 ${isMobileMenuOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
                     }`}
             >
                 <ul className="flex flex-col items-center py-5 gap-5">

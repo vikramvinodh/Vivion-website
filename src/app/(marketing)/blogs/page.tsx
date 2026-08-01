@@ -1,9 +1,26 @@
+import type { Metadata } from 'next';
 import dbConnect from '@/lib/mongodb';
 import Post from '@/models/Post';
 import User from '@/models/User';
 import BlogsList from '@/components/blogs/BlogsList';
+import JsonLd from '@/components/seo/JsonLd';
+import { breadcrumbJsonLd } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 3600;
+
+export const metadata: Metadata = {
+    title: 'Construction & Interior Design Blog',
+    description:
+        'Construction advice, interior layout trends, architectural design ideas and building cost guides from the Vivion Infra team in Bangalore.',
+    alternates: { canonical: '/blogs' },
+    openGraph: {
+        type: 'website',
+        url: '/blogs',
+        title: 'Construction & Interior Design Blog | Vivion',
+        description:
+            'Construction advice, interior design trends and building cost guides from Vivion Infra.',
+    },
+};
 
 async function getPosts() {
     await dbConnect();
@@ -36,6 +53,13 @@ export default async function PublicBlogsPage() {
 
                 <BlogsList posts={posts} />
             </div>
+
+            <JsonLd
+                data={breadcrumbJsonLd([
+                    { name: 'Home', path: '/' },
+                    { name: 'Blog', path: '/blogs' },
+                ])}
+            />
         </div>
     );
 }
