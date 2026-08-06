@@ -7,16 +7,22 @@ export interface IProperty extends mongoose.Document {
     ownerNumber: string;
     rent: number;
     maintenance: number;
+    maintenanceNote: string; // free-text fallback, e.g. "Electricity & water charges" when it isn't a flat fee
     deposit: string; // e.g. "8 months"
+    notes: string; // catch-all for anything Quick Add couldn't map to a field — admin-only
 
     // --- Public listing info ---
     bhk: string; // e.g. "2 BHK"
     sqft: number;
+    balcony: boolean;
     facing: string; // e.g. "North"
     propertyType: string; // e.g. "Apartment"
+    buildingName: string; // e.g. "Stone Bridge Magnatize"
     locality: string; // e.g. "BTM Layout" — display name, matches a Locality.name
     localitySlug: string; // e.g. "btm-layout" — derived; joins to Locality.slug
+    nearbyLandmarks: string; // e.g. "HBR Layout, OMBR Layout"
     bathrooms: number;
+    totalFloor: string; // e.g. "5"
     availableFloor: string; // e.g. "2nd Floor"
     lift: boolean;
     powerBackup: boolean;
@@ -38,7 +44,8 @@ export interface IProperty extends mongoose.Document {
 // Fields that are safe to send to the public website / API.
 // Anything not listed here (rent, maintenance, deposit, owner details) stays private.
 export const PUBLIC_PROPERTY_FIELDS =
-    'bhk sqft facing propertyType locality localitySlug bathrooms availableFloor lift powerBackup ' +
+    'bhk sqft balcony facing propertyType buildingName locality localitySlug nearbyLandmarks bathrooms ' +
+    'totalFloor availableFloor lift powerBackup ' +
     'petsFriendly furnishing religionRestrictions eatingHabits parking availability ' +
     'coverImage images slug createdAt';
 
@@ -48,16 +55,22 @@ const PropertySchema = new mongoose.Schema<IProperty>({
     ownerNumber: { type: String, required: [true, 'Owner number is required'] },
     rent: { type: Number, default: 0 },
     maintenance: { type: Number, default: 0 },
+    maintenanceNote: { type: String, default: '' },
     deposit: { type: String, default: '' },
+    notes: { type: String, default: '' },
 
     // Public
     bhk: { type: String, required: [true, 'BHK is required'] },
     sqft: { type: Number, required: [true, 'Square footage is required'] },
+    balcony: { type: Boolean, default: false },
     facing: { type: String, default: '' },
     propertyType: { type: String, default: 'Apartment' },
+    buildingName: { type: String, default: '' },
     locality: { type: String, required: [true, 'Locality is required'], trim: true },
     localitySlug: { type: String, default: '', index: true },
+    nearbyLandmarks: { type: String, default: '' },
     bathrooms: { type: Number, default: 1 },
+    totalFloor: { type: String, default: '' },
     availableFloor: { type: String, default: '' },
     lift: { type: Boolean, default: false },
     powerBackup: { type: Boolean, default: false },
